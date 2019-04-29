@@ -10,7 +10,7 @@ DDT is a simple data-driven testing approach for executing testing:
 * Parameters can be replaced prior to test execution.
 * Each row can be transformed to change input data types or to lookup ID's in a database.
 
-First, a DDTSuite builder is created. It accepts the following configurations:
+First, a ddt.SuiteBuilder is created. It accepts the following configurations:
 
 * It is instantiated with the pointer to the CSV where to read the test cases.
 * Test cases can be grouped by the values of certain column.
@@ -18,6 +18,7 @@ First, a DDTSuite builder is created. It accepts the following configurations:
 * Values for the variables can be set passing a `map[string]interface{}` as argument.
 * Test suite can have a global name.
 * A row transformer can be set in the form of `func(row []string) []interface{}`.
+* The function that will evaluate the results in the form of `func(data []interface{}) bool`.
 
 ```go
 vars := map[string]interface{} { "VAR_A": true, "VAR_B": false }
@@ -36,23 +37,23 @@ test := func(data []interface{}) bool {
  * A,2,2,VAR_B,10
  * Z,20,2,"Complex value",100
  */
-suite := ddt.NewDDTSuite("input.csv")    // Path to the input file.
-            .GroupBy(0)                  // Group by column 0.
-            .Headers(false)              // True/False if input file has headers.
-            .Variables(vars)             // Variables values. If variable is not in the map it keeps the string value.
-            .GlobalName("DDT Suite")     // Suite Global name.
-            .RowTransformer(transformer) // Function to transform row values.
-            .TestFunction(test)          // The test to be executed against all test cases.
-            .Build()                     // Returns a map[string][]DDTCase.
-                                         // Groups the test cases and each group have an array of test cases.
-                                         // If no grouping is set, there is a single no-name group for all test cases.
+suite := ddt.NewSuiteBuilder("input.csv") // Path to the input file.
+            .GroupBy(0)                   // Group by column 0.
+            .Headers(false)               // True/False if input file has headers.
+            .Variables(vars)              // Variables values. If variable is not in the map it keeps the string value.
+            .GlobalName("DDT Suite")      // Suite Global name.
+            .RowTransformer(transformer)  // Function to transform row values.
+            .TestFunction(test)           // The test to be executed against all test cases.
+            .Build()                      // Returns a map[string][]ddt.TestCase.
+                                          // Groups the test cases and each group have an array of test cases.
+                                          // If no grouping is set, there is a single no-name group for all test cases.
 ```
 
-Each DDTCase has the following properties:
+Each ddt.TestCase has the following internal properties:
 
-* Data: `[]interface{}` input data.
-* Test: `func(data []interface{}) bool` test execution.
-* Suite: `string` the group this test case belongs to.
+* data:         `[]interface{}` input data.
+* testExecutor: `func(data []interface{}) bool` test execution.
+* suite:        `string` the group this test case belongs to.
 
 Each test case can be run using `testCase.Run()`.
 
