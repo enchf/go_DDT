@@ -36,7 +36,7 @@ test := func(data []interface{}) bool {
  * A,2,2,VAR_B,10
  * Z,20,2,"Complex value",100
  */
-suite := ddt.NewDDTSuite("input.csv")       // Path to the input file.
+suite := ddt.NewDDTSuite("input.csv")    // Path to the input file.
             .GroupBy(0)                  // Group by column 0.
             .Headers(false)              // True/False if input file has headers.
             .Variables(vars)             // Variables values. If variable is not in the map it keeps the string value.
