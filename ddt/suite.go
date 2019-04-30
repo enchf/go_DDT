@@ -11,11 +11,11 @@ type VariablesFormat map[string]interface{}
 
 // SuiteBuilder - Test suite main class.
 type SuiteBuilder struct {
+	Name        string
 	inputFile   string
 	groupColumn int
 	headers     bool
 	variables   VariablesFormat
-	suiteName   string
 	transformer RowTransformer
 	test        TestExecutor
 }
@@ -23,11 +23,11 @@ type SuiteBuilder struct {
 // NewSuiteBuilder - Creates a new SuiteBuilder setting up input data file.
 func NewSuiteBuilder(inputFile string) *SuiteBuilder {
 	builder := new(SuiteBuilder)
+	builder.Name = ""
 	builder.inputFile = inputFile
 	builder.groupColumn = -1
 	builder.headers = false
 	builder.variables = nil
-	builder.suiteName = ""
 	builder.transformer = defaultRowTransformer
 	builder.test = defaultTestExecutor
 
@@ -40,7 +40,7 @@ func (suite *SuiteBuilder) GroupBy(column int) *SuiteBuilder {
 	return suite
 }
 
-// Headers - Sets up whether or not the input file have headers.
+// Headers - Sets up whether or not the input file have headers. False by default.
 func (suite *SuiteBuilder) Headers(haveHeaders bool) *SuiteBuilder {
 	suite.headers = haveHeaders
 	return suite
@@ -54,7 +54,7 @@ func (suite *SuiteBuilder) Variables(vars VariablesFormat) *SuiteBuilder {
 
 // GlobalName - Sets up the suite name.
 func (suite *SuiteBuilder) GlobalName(name string) *SuiteBuilder {
-	suite.suiteName = name
+	suite.Name = name
 	return suite
 }
 
