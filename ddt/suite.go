@@ -1,13 +1,7 @@
 package ddt
 
-// RowTransformer - Signature for the row transformer function.
-type RowTransformer func(row []interface{}) []interface{}
-
-// TestExecutor - Signature for the test case executor.
+// TestExecutor - Signature of the test executor function.
 type TestExecutor func(data []interface{}) bool
-
-// VariablesFormat - Format in which the variable values should be set.
-type VariablesFormat map[string]interface{}
 
 // SuiteBuilder - Test suite main class.
 type SuiteBuilder struct {
@@ -15,8 +9,8 @@ type SuiteBuilder struct {
 	inputFile   string
 	groupColumn int
 	headers     bool
-	variables   VariablesFormat
-	transformer RowTransformer
+	variables   map[string]interface{}
+	transformer func(row []string) []interface{}
 	test        TestExecutor
 }
 
@@ -47,7 +41,7 @@ func (suite *SuiteBuilder) Headers(haveHeaders bool) *SuiteBuilder {
 }
 
 // Variables - Sets up a map with the input variables values.
-func (suite *SuiteBuilder) Variables(vars VariablesFormat) *SuiteBuilder {
+func (suite *SuiteBuilder) Variables(vars map[string]interface{}) *SuiteBuilder {
 	suite.variables = vars
 	return suite
 }
@@ -59,7 +53,7 @@ func (suite *SuiteBuilder) GlobalName(name string) *SuiteBuilder {
 }
 
 // RowTransformer - Sets up a custom way to transform input values.
-func (suite *SuiteBuilder) RowTransformer(transformer RowTransformer) *SuiteBuilder {
+func (suite *SuiteBuilder) RowTransformer(transformer func(row []string) []interface{}) *SuiteBuilder {
 	suite.transformer = transformer
 	return suite
 }

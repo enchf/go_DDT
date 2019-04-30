@@ -24,8 +24,12 @@ First, a ddt.SuiteBuilder is created. It accepts the following configurations:
 vars := map[string]interface{} { "A": true, "B": false }
 
 transformer := func(row []string) []interface{} {
-  return []interface{} { row[0], int(row[1]), Database.lookup(int(row[2])), row[3], int(row[4]) }
-}
+		val1, _ := strconv.Atoi(row[1])
+		val2, _ := Database.lookup(row[2])
+		val4, _ := strconv.Atoi(row[4])
+
+		return []interface{}{row[0], val1, val2, row[3], val4}
+	}
 
 test := func(data []interface{}) bool {
   return data[2].FunctionToBeTested(data[1]) == data[4]
@@ -44,7 +48,7 @@ suite.Headers(false)               // True/False if input file has headers.
 suite.Variables(vars)              // Variables values. If variable is not in the map it keeps the string value.
 suite.GlobalName("DDT Suite")      // Suite Global name.
 suite.RowTransformer(transformer)  // Function to transform row values.
-suite.TestFunction(test)           // The test to be executed against all test cases.
+suite.TestExecutor(test)           // The test to be executed against all test cases.
 suite.Build()                      // Returns a map[string][]ddt.TestCase.
                                    // Groups the test cases and each group have an array of test cases.
                                    // If no grouping is set, there is a single no-name group for all test cases.
