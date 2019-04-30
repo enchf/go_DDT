@@ -24,11 +24,6 @@
 #   go-tests = true
 #   unused-packages = true
 
-
-[[constraint]]
-  name = "github.com/hoisie/mustache"
-  version = "0.0.1"
-
 [prune]
   go-tests = true
   unused-packages = true
