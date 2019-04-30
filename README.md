@@ -21,7 +21,7 @@ First, a ddt.SuiteBuilder is created. It accepts the following configurations:
 * The function that will evaluate the results in the form of `func(data []interface{}) bool`.
 
 ```go
-vars := map[string]interface{} { "VAR_A": true, "VAR_B": false }
+vars := map[string]interface{} { "A": true, "B": false }
 
 transformer := func(row []string) []interface{} {
   return []interface{} { row[0], int(row[1]), Database.lookup(int(row[2])), row[3], int(row[4]) }
@@ -33,20 +33,21 @@ test := func(data []interface{}) bool {
 
 /**
  * Input file can be something like:
- * A,1,2,VAR_A,5
- * A,2,2,VAR_B,10
+ * A,1,2,{{A}},5
+ * A,2,2,{{B}},10
  * Z,20,2,"Complex value",100
  */
-suite := ddt.NewSuiteBuilder("input.csv") // Path to the input file.
-            .GroupBy(0)                   // Group by column 0.
-            .Headers(false)               // True/False if input file has headers.
-            .Variables(vars)              // Variables values. If variable is not in the map it keeps the string value.
-            .GlobalName("DDT Suite")      // Suite Global name.
-            .RowTransformer(transformer)  // Function to transform row values.
-            .TestFunction(test)           // The test to be executed against all test cases.
-            .Build()                      // Returns a map[string][]ddt.TestCase.
-                                          // Groups the test cases and each group have an array of test cases.
-                                          // If no grouping is set, there is a single no-name group for all test cases.
+suite := ddt.NewSuiteBuilder("in.csv") // Path to the input file.
+
+suite.GroupBy(0)                   // Group by column 0.
+suite.Headers(false)               // True/False if input file has headers.
+suite.Variables(vars)              // Variables values. If variable is not in the map it keeps the string value.
+suite.GlobalName("DDT Suite")      // Suite Global name.
+suite.RowTransformer(transformer)  // Function to transform row values.
+suite.TestFunction(test)           // The test to be executed against all test cases.
+suite.Build()                      // Returns a map[string][]ddt.TestCase.
+                                   // Groups the test cases and each group have an array of test cases.
+                                   // If no grouping is set, there is a single no-name group for all test cases.
 ```
 
 Each ddt.TestCase has the following internal properties:
