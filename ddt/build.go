@@ -2,9 +2,10 @@ package ddt
 
 import (
 	"encoding/csv"
-	"errors"
 	"fmt"
+	"html/template"
 	"io"
+	"strings"
 )
 
 type buildOperations struct {
@@ -46,31 +47,49 @@ func (suite *SuiteBuilder) Build() (map[string][]TestCase, error) {
 		}
 
 		testCase := suite.operations.rowBuilder(suite, row)
-		group := suite.determineGroup(testCase)
 
-		if _, ok := cases[group]; !ok {
-			cases[group] = make([]TestCase, 0)
+		if _, ok := cases[testCase.group]; !ok {
+			cases[testCase.group] = make([]TestCase, 0)
 		}
 
-		cases[group] = append(cases[group], *testCase)
+		cases[testCase.group] = append(cases[testCase.group], *testCase)
 	}
 
 	return cases, nil
 }
 
 func buildInput(suite *SuiteBuilder) (*csv.Reader, error) {
-	return nil, errors.New("")
+	tpl, err := template.New(suite.Name).ParseFiles(suite.inputFile)
+
+	if err != nil {
+		return nil, err
+	}
+
+	context := suite.variables
+	var buf strings.Builder
+
+	if context == nil {
+		context = map[string]interface{}{}
+	}
+
+	tpl.Execute(&buf, context)
+
+	stringReader := strings.NewReader(buf.String())
+	csvReader := csv.NewReader(stringReader)
+
+	return csvReader, nil
 }
 
 func buildRow(suite *SuiteBuilder, data []string) *TestCase {
-	return nil
+	finalData := suite.transformer(data)
+	return &TestCase{finalData, suite.test, suite.determineGroup(finalData)}
 }
 
-func (suite *SuiteBuilder) determineGroup(testCase *TestCase) string {
+func (suite *SuiteBuilder) determineGroup(finalData []interface{}) string {
 	group := ""
 
-	if suite.groupColumn >= 0 && suite.groupColumn < len(testCase.data) {
-		group = fmt.Sprintf("%v", testCase.data[suite.groupColumn])
+	if suite.groupColumn >= 0 && suite.groupColumn < len(finalData) {
+		group = fmt.Sprintf("%v", finalData[suite.groupColumn])
 	}
 
 	return group

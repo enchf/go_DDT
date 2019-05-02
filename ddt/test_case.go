@@ -4,5 +4,10 @@ package ddt
 type TestCase struct {
 	data  []interface{}
 	test  TestExecutor
-	suite string
+	group string
+}
+
+// Run - Execute the test case itself.
+func (testCase *TestCase) Run() bool {
+	return testCase.test(testCase.data)
 }
