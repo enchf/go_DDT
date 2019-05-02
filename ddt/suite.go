@@ -12,6 +12,7 @@ type SuiteBuilder struct {
 	variables   map[string]interface{}
 	transformer func(row []string) []interface{}
 	test        TestExecutor
+	operations  buildOperations
 }
 
 // NewSuiteBuilder - Creates a new SuiteBuilder setting up input data file.
@@ -24,6 +25,7 @@ func NewSuiteBuilder(inputFile string) *SuiteBuilder {
 	builder.variables = nil
 	builder.transformer = defaultRowTransformer
 	builder.test = defaultTestExecutor
+	builder.operations = setupOperations()
 
 	return builder
 }
