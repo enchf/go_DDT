@@ -4,7 +4,7 @@ build_osx: test
 	GOOS=darwin go build
 
 build_linux: test
-	GOOS=linux go build -o client-affiliate-go-linux
+	GOOS=linux go build -o ddt-linux
 
 coverage: test
 	go tool cover -html=coverage.out
