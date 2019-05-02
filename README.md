@@ -6,7 +6,7 @@ Applying DichloroDiphenylTrichloroethane to code bugs using Data Driven Testing 
 DDT is a simple data-driven testing approach for executing testing:
 
 * Reads input test cases from a CSV.
-* Test cases can contain parameters in Mustache format: `{{THIS_IS_A_PARAMETER}}`.
+* Test cases can contain parameters in text/template Golang format: `{{.THIS_IS_A_PARAMETER}}`.
 * Parameters can be replaced prior to test execution.
 * Each row can be transformed to change input data types or to lookup ID's in a database.
 
@@ -37,8 +37,8 @@ test := func(data []interface{}) bool {
 
 /**
  * Input file can be something like:
- * A,1,2,{{A}},5
- * A,2,2,{{B}},10
+ * A,1,2,{{.A}},5
+ * A,2,2,{{.B}},10
  * Z,20,2,"Complex value",100
  */
 suite := ddt.NewSuiteBuilder("in.csv") // Path to the input file.
@@ -54,11 +54,11 @@ suite.Build()                      // Returns a map[string][]ddt.TestCase.
                                    // If no grouping is set, there is a single no-name group for all test cases.
 ```
 
-Each ddt.TestCase has the following internal properties:
+Each ddt.TestCase has the following properties:
 
+* Group:        `string` the group this test case belongs to.
 * data:         `[]interface{}` input data.
 * testExecutor: `func(data []interface{}) bool` test execution.
-* suite:        `string` the group this test case belongs to.
 
 Each test case can be run using `testCase.Run()`.
 
