@@ -48,11 +48,11 @@ func (suite *SuiteBuilder) Build() (map[string][]TestCase, error) {
 
 		testCase := suite.operations.rowBuilder(suite, row)
 
-		if _, ok := cases[testCase.group]; !ok {
-			cases[testCase.group] = make([]TestCase, 0)
+		if _, ok := cases[testCase.Group]; !ok {
+			cases[testCase.Group] = make([]TestCase, 0)
 		}
 
-		cases[testCase.group] = append(cases[testCase.group], *testCase)
+		cases[testCase.Group] = append(cases[testCase.Group], *testCase)
 	}
 
 	return cases, nil
@@ -82,7 +82,7 @@ func buildInput(suite *SuiteBuilder) (*csv.Reader, error) {
 
 func buildRow(suite *SuiteBuilder, data []string) *TestCase {
 	finalData := suite.transformer(data)
-	return &TestCase{finalData, suite.test, suite.determineGroup(finalData)}
+	return &TestCase{suite.determineGroup(finalData), finalData, suite.test}
 }
 
 func (suite *SuiteBuilder) determineGroup(finalData []interface{}) string {
