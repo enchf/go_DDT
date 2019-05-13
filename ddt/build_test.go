@@ -127,40 +127,6 @@ func TestBuildInput(t *testing.T) {
 	}
 }
 
-/**
-func (suite *SuiteBuilder) Build() (map[string][]TestCase, error) {
-	reader, err := suite.operations.inputBuilder(suite)
-
-	if err != nil {
-		return nil, err
-	}
-
-	cases := make(map[string][]TestCase)
-
-	for {
-		row, err := reader.Read()
-
-		if err != nil {
-			if err != io.EOF {
-				return nil, err
-			}
-
-			break
-		}
-
-		testCase := suite.operations.rowBuilder(suite, row)
-
-		if _, ok := cases[testCase.Group]; !ok {
-			cases[testCase.Group] = make([]TestCase, 0)
-		}
-
-		cases[testCase.Group] = append(cases[testCase.Group], *testCase)
-	}
-
-	return cases, nil
-}
-*/
-
 func TestBuildWithGroup(t *testing.T) {
 	suite := NewSuiteBuilder("fake.file").GroupBy(0)
 	suite.operations = buildOperations{goodInputBuilder("1,2\n1,3\n2,4"), buildRow}
