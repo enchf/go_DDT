@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"html/template"
 	"io"
+	"path"
 	"strings"
 )
 
@@ -59,7 +60,7 @@ func (suite *SuiteBuilder) Build() (map[string][]TestCase, error) {
 }
 
 func buildInput(suite *SuiteBuilder) (*csv.Reader, error) {
-	tpl, err := template.New(suite.Name).ParseFiles(suite.inputFile)
+	tpl, err := template.New(path.Base(suite.inputFile)).ParseFiles(suite.inputFile)
 
 	if err != nil {
 		return nil, err
@@ -72,7 +73,11 @@ func buildInput(suite *SuiteBuilder) (*csv.Reader, error) {
 		context = map[string]interface{}{}
 	}
 
-	tpl.Execute(&buf, context)
+	err = tpl.Execute(&buf, context)
+
+	if err != nil {
+		return nil, err
+	}
 
 	stringReader := strings.NewReader(buf.String())
 	csvReader := csv.NewReader(stringReader)
